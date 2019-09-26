@@ -134,7 +134,6 @@ public class Player : MonoBehaviour
         {
             Instantiate(_laser, new Vector3(transform.position.x, transform.position.y + 1.05f, 0), Quaternion.identity);
         }
-        _audioManager.PlayLaserSound();
         _canFire = false;
         _fireCoroutine = StartCoroutine(FireRate());
     }
