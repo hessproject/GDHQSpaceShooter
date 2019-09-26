@@ -12,6 +12,13 @@ public class PowerUp : MonoBehaviour
     //2 = Shield
     [SerializeField] private int _powerUpID;
 
+    private AudioManager _audioManager;
+
+    private void Start()
+    {
+        _audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -44,6 +51,7 @@ public class PowerUp : MonoBehaviour
                         break;
                 }
             }
+            _audioManager.PlayPowerupSound();
             Destroy(gameObject);
         }
     }

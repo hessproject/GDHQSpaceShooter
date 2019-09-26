@@ -10,10 +10,12 @@ public class Enemy : MonoBehaviour
     private Animator _anim;
     private Player _player;
     private UIManager _uiManager;
+    private AudioManager _audioManager;
 
     private void Start()
     {
         _uiManager = GameObject.FindGameObjectWithTag("UI").GetComponent<UIManager>();
+        _audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
         _player = GameObject.FindGameObjectWithTag("Player").GetComponent<Player>();
         _anim = GetComponent<Animator>();
     }
@@ -34,6 +36,8 @@ public class Enemy : MonoBehaviour
         {
             _speed = 0;
             _anim.SetTrigger("Explode");
+            _audioManager.PlayExplosionSound();
+            Destroy(GetComponent<Collider2D>());
             Destroy(gameObject, _anim.GetCurrentAnimatorStateInfo(0).normalizedTime);
 
 
@@ -52,6 +56,8 @@ public class Enemy : MonoBehaviour
 
             _speed = 0;
             _anim.SetTrigger("Explode");
+            _audioManager.PlayExplosionSound();
+            Destroy(GetComponent<Collider2D>());
             Destroy(gameObject, _anim.GetCurrentAnimatorStateInfo(0).normalizedTime);
             Destroy(other.gameObject);
         }

@@ -14,9 +14,12 @@ public class Player : MonoBehaviour
     [SerializeField] private GameObject _laser;
     [SerializeField] private GameObject _tripleShot;
     private GameManager _gameManager;
+    private AudioManager _audioManager;
     private UIManager _uiManager;
     private SpawnManager _spawnManager;
     private GameObject _playerShield;
+    private GameObject _leftEngineDamage;
+    private GameObject _rightEngineDamage;
 
     //Current state
     private bool _canFire = true;
@@ -31,8 +34,11 @@ public class Player : MonoBehaviour
     {
         transform.position = new Vector3(0, 0, 0);
         _spawnManager = GameObject.FindGameObjectWithTag("Respawn").GetComponent<SpawnManager>();
-        _playerShield = transform.GetChild(0).gameObject;
+        _playerShield = transform.Find("Shield").gameObject;
+        _leftEngineDamage = transform.Find("LeftEngineDamage").gameObject;
+        _rightEngineDamage = transform.Find("RightEngineDamage").gameObject;
         _gameManager = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameManager>();
+        _audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManager>();
         _uiManager = GameObject.FindGameObjectWithTag("UI").GetComponent<UIManager>();
         float speedBoostSpeed = _speed * _speedMultiplier;
     }
@@ -63,11 +69,23 @@ public class Player : MonoBehaviour
         {
             _lives--;
             _uiManager.UpdateLives(_lives);
-            if (_lives < 1)
+
+            if (_lives == 2)
+            {
+                _rightEngineDamage.SetActive(true);
+            }
+            else if(_lives == 1)
+            {
+                _rightEngineDamage.SetActive(true);
+                _leftEngineDamage.SetActive(true);
+            }
+            else if (_lives < 1)
             {
                 _uiManager.GameOver();
                 _gameManager.GameOver();
                 _spawnManager.OnPlayerDeath();
+                _audioManager.PlayExplosionSound();
+                StopCoroutine(_fireCoroutine);
                 Destroy(gameObject);
             }
         } else
@@ -75,6 +93,7 @@ public class Player : MonoBehaviour
             _shieldEnabled = false;
             _playerShield.SetActive(false);
         }
+
     }
 
     public void EnableTripleShot()
@@ -115,6 +134,7 @@ public class Player : MonoBehaviour
         {
             Instantiate(_laser, new Vector3(transform.position.x, transform.position.y + 1.05f, 0), Quaternion.identity);
         }
+        _audioManager.PlayLaserSound();
         _canFire = false;
         _fireCoroutine = StartCoroutine(FireRate());
     }
